@@ -648,12 +648,14 @@ export const EffectFns = new Map([
         if (options.round.direction == CONFIG.PTUCombat.DirectionOptions.FORWARD) return; // If new round already started don't register EoT effect.
         await combat.update({ [`flags.ptu.applied.${tokenId}.${effect}`]: true })
     }],
-    ["sleeping", async function (tokenId, combat, lastCombatant, roundData, options, sender, effect, isStartOfTurn) {
-        if (isStartOfTurn) return;
+    ["sleep", async function (tokenId, combat, lastCombatant, roundData, options, sender, effect, isStartOfTurn) {
+        if (!isStartOfTurn) return;
         if (!IsSameTokenAndNotAlreadyApplied(effect, tokenId, combat, lastCombatant)) return;
         debug("Sleep Trigger!");
 
         /** Actually apply Affliction */
+        const isErrata = game.settings.get("ptu", "errata");
+
         const actor = lastCombatant.actor;
 
         const saveCheck = await actor.sheet._onSaveRoll();
@@ -661,19 +663,13 @@ export const EffectFns = new Map([
         roll._total = roll.total;
         let messageData = {};
 
-        const DC = CONFIG.PTUCombat.DC.SLEEP;
-
         if (roll.total >= DC) {
             messageData = {
                 title: `${actor.name}'s<br>Sleep Save!`,
                 roll: roll,
-                description: `Save Success!<br>${actor.name} woke up!`,
+                description: `Save Success!`,
                 success: true
             }
-
-            await actor.effects.find(x => x.label == "Sleep").delete();
-            const bad_sleep = actor.effects.find(x => x.label == "BadSleep");
-            if (bad_sleep) await bad_sleep.delete();
         }
         else {
             messageData = {
@@ -682,12 +678,18 @@ export const EffectFns = new Map([
                 description: `Save Failed!`,
                 success: false
             }
+            if (isErrata) {
+                const aeAffliction = mergeObject(CONFIG.statusEffects.find(x => x.id == "effect.other.vulnerable"), {
+                    duration: { rounds: 1, turns: 0 },
+                    "flags.ptu.editLocked": true,
+                });
+                await actor.createEmbeddedDocuments("ActiveEffect", [aeAffliction]);
+            }
         }
         const content = await renderTemplate('/systems/ptu/templates/chat/save-check.hbs', messageData);
         await saveCheck.update({ content: content });
 
         /** If affliction can only be triggered once per turn, make sure it shows as applied. */
-        if (options.round.direction == CONFIG.PTUCombat.DirectionOptions.FORWARD) return; // If new round already started don't register EoT effect.
         await combat.update({ [`flags.ptu.applied.${tokenId}.${effect}`]: true })
     }],
     ["badly_sleeping", async function (tokenId, combat, lastCombatant, roundData, options, sender, effect, isStartOfTurn) {

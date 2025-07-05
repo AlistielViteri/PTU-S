@@ -516,13 +516,13 @@ export default class PTUCombat {
       }
 
       // If asleep ignore Rage/Infatuate/Confusion checks & damage
-      if (
-        affliction == "raging" ||
-        affliction == "infatuated" ||
-        affliction == "confused"
-      ) {
-        if (afflictions.includes("sleeping")) continue;
-      }
+      // if (
+      //  affliction == "raging" ||
+      //  affliction == "infatuated" ||
+      //  affliction == "confused"
+      // ) {
+      //  if (afflictions.includes("sleeping")) continue;
+      // }
 
       // If badly sleeping but not sleeping, ignore.
       if (affliction == "badly_sleeping") {

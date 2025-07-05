@@ -11,18 +11,19 @@ export const Afflictions = [
     {
         id: "effect.persistent.burned", label: "Burned", icon: 'icons/svg/fire.svg', changes: [
             { key: "flags.ptu.is_burned", value: true, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: 50 },
-            { key: "system.stats.atk.stage.mod", value: -6, mode: CONST.ACTIVE_EFFECT_MODES.ADD, priority: 10 }
+            { key: "system.stats.atk.stage.mod", value: -5, mode: CONST.ACTIVE_EFFECT_MODES.ADD, priority: 10 }
         ]
     },
     {
-        id: "effect.persistent.frozen", label: "Frozen", icon: 'icons/svg/frozen.svg', changes: [
-            { key: "flags.ptu.is_frozen", value: true, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: 50 },
-            { key: "system.stats.stk.stage.mod", value: -6, mode: CONST.ACTIVE_EFFECT_MODES.ADD, priority: 10 }
+        id: "effect.persistent.frostbitten", label: "Frostbitten", icon: 'icons/svg/frozen.svg', changes: [
+            { key: "flags.ptu.is_frostbitten", value: true, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: 50 },
+            { key: "system.stats.spatk.stage.mod", value: -5, mode: CONST.ACTIVE_EFFECT_MODES.ADD, priority: 10 }
         ]
     },
     {
         id: "effect.persistent.paralysis", label: "Paralysis", icon: 'icons/svg/lightning.svg', changes: [
             { key: "flags.ptu.is_paralyzed", value: true, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: 50 },
+            { key: "system.stats.spd.stage.mod", value: -5, mode: CONST.ACTIVE_EFFECT_MODES.ADD, priority: 10 }
         ]
     },
     {
@@ -503,42 +504,34 @@ export const EffectFns = new Map([
         /** If affliction can only be triggered once per turn, make sure it shows as applied. */
         await combat.update({ [`flags.ptu.applied.${tokenId}.${effect}`]: true })
     }],
-    ["frozen", async function (tokenId, combat, lastCombatant, roundData, options, sender, effect, isStartOfTurn) {
+    ["frostbitten", async function (tokenId, combat, lastCombatant, roundData, options, sender, effect, isStartOfTurn) {
         if (isStartOfTurn) return;
         if (!IsSameTokenAndNotAlreadyApplied(effect, tokenId, combat, lastCombatant)) return;
-        debug("Frozen Trigger!");
 
         /** Actually apply Affliction */
         const actor = lastCombatant.actor;
+        if (actor.system.modifiers.immuneToEffectDamage) return;
 
-        const saveCheck = await actor.sheet._onSaveRoll();
-        const roll = JSON.parse(saveCheck.roll);
-        roll._total = roll.total;
-        let messageData = {};
+        let applyFrostbite = async () => {
+            const token = canvas.tokens.get(lastCombatant.token.id);
+            await ApplyFlatDamage([token], "Frostbite", actor.system.health.tick);
+        }
 
-        const DC = actor.system.typing.includes("Fire") ? CONFIG.PTUCombat.DC.FROZEN + CONFIG.PTUCombat.DC.FROZEN_FIRE_MOD : CONFIG.PTUCombat.DC.FROZEN +
-            game.settings.get("ptu", "currentWeather") == "Sunny" ? -4 : game.settings.get("ptu", "currentWeather") == "Hail" ? 2 : 0;
-
-        if (roll.total >= DC) {
-            messageData = {
-                title: `${actor.name}'s<br>Frozen Save!`,
-                roll: roll,
-                description: `Save Success!<br>${actor.name} Thawed Out!`,
-                success: true
-            }
-
-            await actor.effects.find(x => x.label == Handlebars.helpers.capitalizeFirst(effect)).delete();
+        const actions_taken = actor.flags.ptu?.actions_taken;
+        if (actions_taken?.standard) {
+            await applyFrostbite();
         }
         else {
-            messageData = {
-                title: `${actor.name}'s<br>Frozen Save!`,
-                roll: roll,
-                description: `Save Failed!`,
-                success: false
-            }
+            let response = true;
+            await Dialog.confirm({
+                title: `${lastCombatant.name}'s Frostbite`,
+                content: `<p>Has ${lastCombatant.name} taken a Standard Action this turn?</p><p><small class="muted-text">Aka, should they take Frostbite damage?</small></p>`,
+                yes: async () => await applyFrostbite(),
+                no: () => response = false,
+                defaultYes: false
+            })
+            if(!response) return;
         }
-        const content = await renderTemplate('/systems/ptu/templates/chat/save-check.hbs', messageData);
-        await saveCheck.update({ content: content });
 
         /** If affliction can only be triggered once per turn, make sure it shows as applied. */
         if (options.round.direction == CONFIG.PTUCombat.DirectionOptions.FORWARD) return; // If new round already started don't register EoT effect.

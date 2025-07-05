@@ -64,10 +64,10 @@ export function CalculateStatTotal(levelUpPoints, stats, {twistedPower, ignoreSt
     };
 }
 
-export function CalculatePoisonedCondition(stats, ptuFlags) {
-    if(ptuFlags?.is_poisoned == undefined) return stats;
-
-    /** TODO: Add Potent Venom check */
-    stats.spdef.stage.mod -= 2;
-    return stats;
-}
+//export function CalculatePoisonedCondition(stats, ptuFlags) {
+//    if(ptuFlags?.is_poisoned == undefined) return stats;
+//
+//    /** TODO: Add Potent Venom check */
+//    stats.spdef.stage.mod -= 2;
+//    return stats;
+//}

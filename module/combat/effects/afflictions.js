@@ -663,6 +663,8 @@ export const EffectFns = new Map([
         roll._total = roll.total;
         let messageData = {};
 
+        const DC = CONFIG.PTUCombat.DC.SLEEP;
+
         if (roll.total >= DC) {
             messageData = {
                 title: `${actor.name}'s<br>Sleep Save!`,

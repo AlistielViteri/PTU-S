@@ -67,15 +67,15 @@ export class PTUActor extends Actor {
             { label: "Speed Evasion Mod", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: actorSystem.modifiers.evasion.speed.total } },
           ]
         },
-        stats: {
-          spdef: {
-            stage: {
-              mod: [
-                this.flags.ptu?.is_poisoned ? { label: "Poisoned", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 } } : undefined,
-              ].filter(x => x !== undefined)
-            }
-          }
-        },
+        //stats: {
+        //  spdef: {
+        //    stage: {
+        //      mod: [
+        //        this.flags.ptu?.is_poisoned ? { label: "Poisoned", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 } } : undefined,
+        //      ].filter(x => x !== undefined)
+        //    }
+        //  }
+        //},
         skills: actorSystem.modifiers.skillBonus.total > 0 ? Object.keys(actorSystem.skills).map(skill => {
           return {
             [skill]: {

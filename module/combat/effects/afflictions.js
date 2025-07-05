@@ -29,6 +29,7 @@ export const Afflictions = [
     {
         id: "effect.persistent.poisoned", label: "Poisoned", icon: 'icons/svg/acid.svg', changes: [
             { key: "flags.ptu.is_poisoned", value: true, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: 50 },
+            { key: "system.stats.spdef.stage.mod", value: -2, mode: CONST.ACTIVE_EFFECT_MODES.ADD, priority: 10 }
         ]
     },
     {

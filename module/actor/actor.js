@@ -55,15 +55,15 @@ export class PTUActor extends Actor {
         ],
         evasion: {
           physical: [
-            { label: "DEF Stat / 5 (max 6)", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(Math.floor(actorSystem.stats.def.total / 5), 6) } },
+            { label: "DEF Stat / 10 (max 6)", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(Math.floor(actorSystem.stats.def.total / 10), 6) } },
             { label: "Physical Evasion Mod", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: actorSystem.modifiers.evasion.physical.total } },
           ],
           special: [
-            { label: "SP.DEF Stat / 5 (max 6)", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(Math.floor(actorSystem.stats.spdef.total / 5), 6) } },
+            { label: "SP.DEF Stat / 10 (max 6)", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(Math.floor(actorSystem.stats.spdef.total / 10), 6) } },
             { label: "Special Evasion Mod", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: actorSystem.modifiers.evasion.special.total } },
           ],
           speed: [
-            { label: "SPD Stat / 5 (max 6)", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(Math.floor(actorSystem.stats.spd.total / 5), 6) } },
+            { label: "SPD Stat / 10 (max 6)", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(Math.floor(actorSystem.stats.spd.total / 10), 6) } },
             { label: "Speed Evasion Mod", change: { type: CONST.ACTIVE_EFFECT_MODES.ADD, value: actorSystem.modifiers.evasion.speed.total } },
           ]
         },

@@ -12,11 +12,16 @@ export function CalculateEvasions(data, ptuFlags, actor_items) {
         "special": 0,
         "speed": 0
     };
-    
+        // let evasion = {
+    //     "physical": Math.max(Math.min(Math.floor(data.stats.def.total / 10),6) + data.modifiers.evasion.physical.total + tangled_feet_modifier, 0),
+    //     "special": Math.max(Math.min(Math.floor(data.stats.spdef.total / 10),6) + data.modifiers.evasion.special.total + tangled_feet_modifier, 0),
+    //     "speed": Math.max(Math.min(Math.floor(data.stats.spd.total / 10),6) + data.modifiers.evasion.speed.total + tangled_feet_modifier, 0)
+    // };
+
     let evasion = {
-        "physical": Math.max(Math.min(Math.floor(data.stats.def.total / 10),6) + data.modifiers.evasion.physical.total + tangled_feet_modifier, 0),
-        "special": Math.max(Math.min(Math.floor(data.stats.spdef.total / 10),6) + data.modifiers.evasion.special.total + tangled_feet_modifier, 0),
-        "speed": Math.max(Math.min(Math.floor(data.stats.spd.total / 10),6) + data.modifiers.evasion.speed.total + tangled_feet_modifier, 0)
+        "physical": 0,
+        "special": 0,
+        "speed": 0
     };
 
     if(ptuFlags?.is_stuck) evasion.speed = 0;

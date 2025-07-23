@@ -392,6 +392,7 @@ export class PTUActor extends Actor {
       if (key == "hardened" || key == "flinch_count" || key == 'immuneToEffectDamage') continue;
       if (key == "damageBonus" || key == "damageReduction" || key == "evasion") {
         for (let [subkey, value] of Object.entries(mod)) {
+          logger.log("key: " + key + " subkey: " + subkey + " value: " + value)
           data.modifiers[key][subkey]["total"] = (value["value"] ?? 0) + (value["mod"] ?? 0);
         }
         continue;

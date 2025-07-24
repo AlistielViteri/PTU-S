@@ -19,9 +19,9 @@ export function CalculateEvasions(data, ptuFlags, actor_items) {
     // };
 
     let evasion = {
-        "physical": 0,
-        "special": 0,
-        "speed": 0
+        "physical": Math.min(Math.floor(data.stats.def.total / 10) + data.modifiers.evasion.physical.total + tangled_feet_modifier, 6), 
+        "special": Math.min(Math.floor(data.stats.spdef.total / 10) + data.modifiers.evasion.special.total + tangled_feet_modifier, 6), 
+        "speed": Math.min(Math.floor(data.stats.spd.total / 10) + data.modifiers.evasion.speed.total + tangled_feet_modifier, 6), 
     };
 
     if(ptuFlags?.is_stuck) evasion.speed = 0;
